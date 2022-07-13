@@ -3,16 +3,25 @@
 #ifndef MAKERS_CONTROLLER_ARDUINO_CPP
 #define MAKERS_CONTROLLER_ARDUINO_CPP
 
-MakersController* MakersController::_reference = nullptr;
+MakersController *MakersController::_reference = nullptr;
 
 MakersController::MakersController()
 {
-    _reference = this;    
+    _reference = this;
 }
 
 void MakersController::printMakersASCII()
 {
-    Serial.println( "  __  __       _                     ____     ___  _   _ \n |  \\/  | __ _| | _____ _ __ ___    / __ \\   / _ \\| | | |\n | |\\/| |/ _` | |/ / _ \\ '__/ __|  / / _` | | | | | | | |\n | |  | | (_| |   <  __/ |  \\__ \\ | | (_| | | |_| | |_| |\n |_|  |_|\\__,_|_|\\_\\___|_|  |___/  \\ \\__,_|  \\___/ \\___/ \n                                    \\____/               ");
+    Serial.println("  __  __       _                     ____     ___  _   _ \n |  \\/  | __ _| | _____ _ __ ___    / __ \\   / _ \\| | | |\n | |\\/| |/ _` | |/ / _ \\ '__/ __|  / / _` | | | | | | | |\n | |  | | (_| |   <  __/ |  \\__ \\ | | (_| | | |_| | |_| |\n |_|  |_|\\__,_|_|\\_\\___|_|  |___/  \\ \\__,_|  \\___/ \\___/ \n                                    \\____/               ");
+}
+
+boolean MakersController::isConnected()
+{
+    // get the current number of peer devices, if its greater than 0 we know the device is connected
+    // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/network/esp_now.html#_CPPv416esp_now_peer_num
+    esp_now_peer_num_t num;
+    esp_now_get_peer_num(&num);
+    return (num.total_num > 0);
 }
 
 void MakersController::setPeerAddress(String address)
@@ -82,6 +91,7 @@ void MakersController::startController(String peer_address)
 
 void MakersController::startReceiver()
 {
+    printMakersASCII();
     Serial.println("Starting Receiver");
 
     // Set device as a Wi-Fi Station
@@ -102,7 +112,8 @@ void MakersController::startReceiver()
     esp_now_register_recv_cb(MakersController::onDataReceived);
 }
 
-void MakersController::onDataReceived(const uint8_t * mac, const uint8_t *incomingData, int len){
+void MakersController::onDataReceived(const uint8_t *mac, const uint8_t *incomingData, int len)
+{
     int previous_button_state = _reference->controller_data.buttons;
     memcpy(&_reference->controller_data, incomingData, sizeof(makers_controller_message));
     _reference->checkButtonTransitions(previous_button_state, _reference->controller_data.buttons);
@@ -133,37 +144,39 @@ void MakersController::initIO()
 
 void MakersController::onDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
 {
-        // Serial.print("\r\nLast Packet Send Status:\t");
-        // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
-        int result = (status == ESP_NOW_SEND_SUCCESS) ? 1 : 0;
-        _reference->trackDataSentStatus(result);
-        // Serial.printf("percent successful %f%\n", _reference->getSuccessfulTransmissionPercentage());
+    // Serial.print("\r\nLast Packet Send Status:\t");
+    // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+    int result = (status == ESP_NOW_SEND_SUCCESS) ? 1 : 0;
+    _reference->trackDataSentStatus(result);
+    // Serial.printf("percent successful %f%\n", _reference->getSuccessfulTransmissionPercentage());
 }
 
-void MakersController::trackDataSentStatus(int status){
+void MakersController::trackDataSentStatus(int status)
+{
     data_sent_tracker &= ~(1 << data_sent_tracker_index);
     data_sent_tracker |= status << data_sent_tracker_index;
     data_sent_tracker_index++;
-    if(data_sent_tracker_index >= SENT_POLLING_WINDOW_BITS)
-        data_sent_tracker_index = 0; 
+    if (data_sent_tracker_index >= SENT_POLLING_WINDOW_BITS)
+        data_sent_tracker_index = 0;
 }
 
-float MakersController::getSuccessfulTransmissionPercentage(){
-    float total_success = 0; 
-    for(int a = 0; a < SENT_POLLING_WINDOW_BITS; a++)
+float MakersController::getSuccessfulTransmissionPercentage()
+{
+    float total_success = 0;
+    for (int a = 0; a < SENT_POLLING_WINDOW_BITS; a++)
         total_success += ((data_sent_tracker >> a) & 0x01);
-    
-    //calculate percentage
-    return (total_success / ((float) SENT_POLLING_WINDOW_BITS))*100.0;
+
+    // calculate percentage
+    return (total_success / ((float)SENT_POLLING_WINDOW_BITS)) * 100.0;
 }
 
 void MakersController::readAndSend()
 {
-    controller_data.left_joy_y = analogRead(PIN_LEFT_JOY_Y);
-    controller_data.left_joy_x = analogRead(PIN_LEFT_JOY_X);
+    controller_data.left_joy_y = (analogRead(PIN_LEFT_JOY_Y)/2048.0) - 1.0;
+    controller_data.left_joy_x = (analogRead(PIN_LEFT_JOY_X)/2048.0) - 1.0;
 
-    controller_data.right_joy_y = analogRead(PIN_RIGHT_JOY_Y);
-    controller_data.right_joy_x = analogRead(PIN_RIGHT_JOY_X);
+    controller_data.right_joy_y = (analogRead(PIN_RIGHT_JOY_Y)/2048.0) - 1.0;
+    controller_data.right_joy_x = (analogRead(PIN_RIGHT_JOY_X)/2048.0) - 1.0;
 
     int previous_button_state = controller_data.buttons;
 
@@ -281,22 +294,22 @@ int MakersController::readLeftTrigger()
     return readSwitch(MAKERS_CONTROLLER_SW_L_TRIG);
 }
 
-int MakersController::readLeftJoystickX()
+float MakersController::readLeftJoystickX()
 {
     return controller_data.left_joy_x;
 }
 
-int MakersController::readLeftJoystickY()
+float MakersController::readLeftJoystickY()
 {
     return controller_data.left_joy_y;
 }
 
-int MakersController::readRightJoystickX()
+float MakersController::readRightJoystickX()
 {
     return controller_data.right_joy_x;
 }
 
-int MakersController::readRightJoystickY()
+float MakersController::readRightJoystickY()
 {
     return controller_data.right_joy_y;
 }

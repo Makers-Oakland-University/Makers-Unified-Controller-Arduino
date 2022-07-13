@@ -11,10 +11,10 @@
 // Structs
 typedef struct makers_controller_message
 {
-    int16_t left_joy_y;
-    int16_t left_joy_x;
-    int16_t right_joy_y;
-    int16_t right_joy_x;
+    float left_joy_y;
+    float left_joy_x;
+    float right_joy_y;
+    float right_joy_x;
     uint16_t buttons;
 } makers_controller_message;
 
@@ -112,12 +112,13 @@ public:
     int readLeftJoystickSwitch();
     int readRightTrigger();
     int readLeftTrigger();
-    int readLeftJoystickX();
-    int readLeftJoystickY();
-    int readRightJoystickX();
-    int readRightJoystickY();
+    float readLeftJoystickX();
+    float readLeftJoystickY();
+    float readRightJoystickX();
+    float readRightJoystickY();
     void registerCallback(int button, void (*cb)(int));
     float getSuccessfulTransmissionPercentage();
+    boolean isConnected(); 
 };
 
 #endif
