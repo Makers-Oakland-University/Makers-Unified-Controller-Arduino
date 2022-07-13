@@ -21,18 +21,19 @@ typedef struct makers_controller_message
 // bit locations for 'buttons' since these are all booleans
 // we can save some space in the transmission by just putting them into
 // a single integer.
-#define S1_POS 0
-#define S2_POS 1
-#define S3_POS 2
-#define S4_POS 3
-#define S5_POS 4
-#define S6_POS 5
-#define S7_POS 6
-#define S8_POS 7
-#define R_JOY_S_POS 8
-#define L_JOY_S_POS 9
-#define R_TRIG_S_POS 10
-#define L_TRIG_S_POS 11
+#define MAKERS_CONTROLLER_NUM_BUTTONS 12
+#define MAKERS_CONTROLLER_SW1 0
+#define MAKERS_CONTROLLER_SW2 1
+#define MAKERS_CONTROLLER_SW3 2
+#define MAKERS_CONTROLLER_SW4 3
+#define MAKERS_CONTROLLER_SW5 4
+#define MAKERS_CONTROLLER_SW6 5
+#define MAKERS_CONTROLLER_SW7 6
+#define MAKERS_CONTROLLER_SW8 7
+#define MAKERS_CONTROLLER_SW_R_JOY 8
+#define MAKERS_CONTROLLER_SW_L_JOY 9
+#define MAKERS_CONTROLLER_SW_R_TRIG 10
+#define MAKERS_CONTROLLER_SW_L_TRIG 11
 
 // Pin declarations for the controller
 #define PIN_LEFT_JOY_Y 34
@@ -54,39 +55,69 @@ typedef struct makers_controller_message
 #define PIN_LEFT_TRIG 23
 #define PIN_RIGHT_TRIG 27
 
-//array for simplification of button reading code.
+#define SENT_POLLING_WINDOW_BITS 25
+
+// array for simplification of button reading code.
 const int buttons[] = {
-  PIN_SW1,
-  PIN_SW2,
-  PIN_SW3,
-  PIN_SW4,
-  PIN_SW5,
-  PIN_SW6,
-  PIN_SW7,
-  PIN_SW8,
-  PIN_LEFT_TRIG,
-  PIN_RIGHT_TRIG,
-  PIN_LEFT_JOY_SW,
-  PIN_RIGHT_JOY_SW
-};
+    PIN_SW1,
+    PIN_SW2,
+    PIN_SW3,
+    PIN_SW4,
+    PIN_SW5,
+    PIN_SW6,
+    PIN_SW7,
+    PIN_SW8,
+    PIN_LEFT_TRIG,
+    PIN_RIGHT_TRIG,
+    PIN_LEFT_JOY_SW,
+    PIN_RIGHT_JOY_SW};
 
 class MakersController
 {
     makers_controller_message controller_data;
     esp_now_peer_info_t peerInfo;
     uint8_t broadcastAddress[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-    
+    void (*_callbacks[MAKERS_CONTROLLER_NUM_BUTTONS])(int);
+    static MakersController* _reference;
+
+    unsigned long data_sent_tracker = 0; 
+    int data_sent_tracker_index = 0; 
+
     // Private constructor so that no objects can be created.
     static void onDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
-    void setPeerAddress(String address);    
+    static void onDataReceived(const uint8_t * mac, const uint8_t *incomingData, int len);
+    void setPeerAddress(String address);
     void initIO();
-    int readSwitch(int position);
-
+    inline int readSwitch(int position);
+    void serviceCallback(int index, int button_state);
+    void checkButtonTransitions(uint16_t previous_state, uint16_t current_state);
+    void printMakersASCII();
+    void trackDataSentStatus(int status);
 public:
     MakersController();
-    void begin(String peer_address);
+    void startController(String peer_address);
+    void startReceiver();
     String getPeerAddressString();
     void readAndSend();
+    void registerCallback(void (*cb)(int));
+    int readSW1();
+    int readSW2();
+    int readSW3();
+    int readSW4();
+    int readSW5();
+    int readSW6();
+    int readSW7();
+    int readSW8();
+    int readRightJoystickSwitch();
+    int readLeftJoystickSwitch();
+    int readRightTrigger();
+    int readLeftTrigger();
+    int readLeftJoystickX();
+    int readLeftJoystickY();
+    int readRightJoystickX();
+    int readRightJoystickY();
+    void registerCallback(int button, void (*cb)(int));
+    float getSuccessfulTransmissionPercentage();
 };
 
 #endif
