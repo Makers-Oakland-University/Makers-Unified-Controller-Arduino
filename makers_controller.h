@@ -82,7 +82,7 @@ class MakersController
 
     unsigned long data_sent_tracker = 0; 
     int data_sent_tracker_index = 0; 
-
+    
     // Private constructor so that no objects can be created.
     static void onDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
     static void onDataReceived(const uint8_t * mac, const uint8_t *incomingData, int len);
@@ -99,7 +99,6 @@ public:
     void startReceiver();
     String getPeerAddressString();
     void readAndSend();
-    void registerCallback(void (*cb)(int));
     int readSW1();
     int readSW2();
     int readSW3();
