@@ -3,6 +3,8 @@
  *  initializes an ESP32 as a receiver and prints the received button inputs
  *  to the serial terminal so that we can view them. Demonstrates all the controller
  *  inputs that can be read remotely. 
+ * 
+ *  See Github page for more information about the library https://github.com/Makers-Oakland-University/Makers-Unified-Controller-Arduino
  */
 
 

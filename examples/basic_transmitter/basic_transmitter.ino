@@ -2,6 +2,8 @@
  *  
  *  initializes a makers controller with the most basic functionality and sends 
  *  controller data to a connected ESP32. 
+ * 
+ *  See Github page for more information about the library https://github.com/Makers-Oakland-University/Makers-Unified-Controller-Arduino
  */
 
 //import library
