@@ -124,10 +124,6 @@ void MakersController::onDataReceived(const uint8_t *mac, const uint8_t *incomin
     memcpy(&_reference->controller_data, incomingData, sizeof(makers_controller_message));
     _reference->checkButtonTransitions(previous_button_state, _reference->controller_data.buttons);
     _reference->checkJoystickTransition(
-        plx,
-        ply,
-        prx,
-        pry,
         _reference->controller_data.left_joy_x,
         _reference->controller_data.left_joy_y,
         _reference->controller_data.right_joy_x,
@@ -219,23 +215,19 @@ void MakersController::readAndSend()
     esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *)&controller_data, sizeof(controller_data));
     checkButtonTransitions(previous_button_state, controller_data.buttons);
     _reference->checkJoystickTransition(
-        plx,
-        ply,
-        prx,
-        pry,
         _reference->controller_data.left_joy_x,
         _reference->controller_data.left_joy_y,
         _reference->controller_data.right_joy_x,
         _reference->controller_data.right_joy_y);
 }
 
-void MakersController::checkJoystickTransition(float plx, float ply, float prx, float pry, float nlx, float nly, float nrx, float nry)
+void MakersController::checkJoystickTransition(float nlx, float nly, float nrx, float nry)
 {
     boolean joysticksChanged = false;
-    boolean lx_changed = abs(plx - nlx) >= _joystick_update_threshold;
-    boolean ly_changed = abs(ply - nly) >= _joystick_update_threshold;
-    boolean rx_changed = abs(prx - nrx) >= _joystick_update_threshold;
-    boolean ry_changed = abs(pry - nry) >= _joystick_update_threshold;
+    boolean lx_changed = abs(_last_joystick_values_triggered[0] - nlx) >= _joystick_update_threshold;
+    boolean ly_changed = abs(_last_joystick_values_triggered[1] - nly) >= _joystick_update_threshold;
+    boolean rx_changed = abs(_last_joystick_values_triggered[2] - nrx) >= _joystick_update_threshold;
+    boolean ry_changed = abs(_last_joystick_values_triggered[3] - nry) >= _joystick_update_threshold;
 
     if (lx_changed || ly_changed || rx_changed || ry_changed)
         triggerJoystickCallback(nlx, nly, nrx, nry);
@@ -278,8 +270,17 @@ void MakersController::serviceCallback(int index, int button_state)
 
 void MakersController::triggerJoystickCallback(float lx, float ly, float rx, float ry)
 {
-    if (_joystickCallback != nullptr)
-        _joystickCallback(lx, ly, rx, ry);
+    //if no joystick callback then return from the function
+    if (_joystickCallback == nullptr)
+        return;
+
+    _joystickCallback(lx, ly, rx, ry);
+
+
+    _last_joystick_values_triggered[0] = lx; 
+    _last_joystick_values_triggered[1] = ly; 
+    _last_joystick_values_triggered[2] = rx; 
+    _last_joystick_values_triggered[3] = ry; 
 }
 
 void MakersController::registerJoystickCallback(void (*cb)(float, float, float, float))

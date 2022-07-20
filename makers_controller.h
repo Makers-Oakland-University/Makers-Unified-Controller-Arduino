@@ -78,6 +78,8 @@ class MakersController
     esp_now_peer_info_t peerInfo;
     uint8_t broadcastAddress[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
     void (*_callbacks[MAKERS_CONTROLLER_NUM_BUTTONS])(int);
+    float _last_joystick_values_triggered[4] = {0,0,0,0}; //in-order left-x, left-y, right-x, right-y
+
     void (*_joystickCallback)(float, float, float, float);
     float _joystick_update_threshold = 0.03;
     static MakersController *_reference;
@@ -91,7 +93,7 @@ class MakersController
     void initIO();
     inline int readSwitch(int position);
     inline void triggerJoystickCallback(float lx, float ly, float rx, float ry);
-    void checkJoystickTransition(float plx, float  ply, float prx, float pry, float nlx, float nly, float nrx, float nry);
+    void checkJoystickTransition(float nlx, float nly, float nrx, float nry);
     void serviceCallback(int index, int button_state);
     void checkButtonTransitions(uint16_t previous_state, uint16_t current_state);
     void printMakersASCII();
