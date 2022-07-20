@@ -78,21 +78,25 @@ class MakersController
     esp_now_peer_info_t peerInfo;
     uint8_t broadcastAddress[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
     void (*_callbacks[MAKERS_CONTROLLER_NUM_BUTTONS])(int);
-    static MakersController* _reference;
+    void (*_joystickCallback)(float, float, float, float);
+    float _joystick_update_threshold = 0.0;
+    static MakersController *_reference;
 
-    unsigned long data_sent_tracker = 0; 
-    int data_sent_tracker_index = 0; 
-    
+    unsigned long data_sent_tracker = 0;
+    int data_sent_tracker_index = 0;
+
     // Private constructor so that no objects can be created.
     static void onDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
-    static void onDataReceived(const uint8_t * mac, const uint8_t *incomingData, int len);
+    static void onDataReceived(const uint8_t *mac, const uint8_t *incomingData, int len);
     void setPeerAddress(String address);
     void initIO();
     inline int readSwitch(int position);
+    inline void triggerJoystickCallback(float lx, float ly, float rx, float ry);
     void serviceCallback(int index, int button_state);
     void checkButtonTransitions(uint16_t previous_state, uint16_t current_state);
     void printMakersASCII();
     void trackDataSentStatus(int status);
+
 public:
     MakersController();
     void startController(String peer_address);
@@ -116,8 +120,9 @@ public:
     float readRightJoystickX();
     float readRightJoystickY();
     void registerCallback(int button, void (*cb)(int));
+    void registerJoystickCallback(void (*cb)(float, float, float, float));
     float getSuccessfulTransmissionPercentage();
-    boolean isConnected(); 
+    boolean isConnected();
 };
 
 #endif
