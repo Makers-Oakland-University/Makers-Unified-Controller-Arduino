@@ -1,0 +1,35 @@
+# Syntax Coloring Map For Makers-Unified-Controller-Arduino
+
+# Datatypes (KEYWORD1)
+MakersController	KEYWORD1
+
+# Methods and Functions (KEYWORD2)
+MakersController	KEYWORD2
+startController	KEYWORD2
+readAndSend	KEYWORD2
+registerButtonCallback	KEYWORD2
+registerJoystickCallback	KEYWORD2
+setJoystickCallbackThreshold	KEYWORD2
+startReceiver	KEYWORD2
+getSuccessfulTransmissionPercentage	KEYWORD2
+isConnected	KEYWORD2
+readSW1	KEYWORD2
+readSW2	KEYWORD2
+readSW3	KEYWORD2
+readSW4	KEYWORD2
+readSW5	KEYWORD2
+readSW6	KEYWORD2
+readSW7	KEYWORD2
+readSW8	KEYWORD2
+readRightJoystickSwitch	KEYWORD2
+readLeftJoystickSwitch	KEYWORD2
+readRightTrigger	KEYWORD2
+readLeftTrigger	KEYWORD2
+readLeftJoystickX	KEYWORD2
+readLeftJoystickY	KEYWORD2
+readRightJoystickX	KEYWORD2
+readRightJoystickY	KEYWORD2
+
+# Instances (KEYWORD2)
+
+# Constants (LITERAL1)

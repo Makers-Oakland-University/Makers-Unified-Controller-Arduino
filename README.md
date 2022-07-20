@@ -35,6 +35,8 @@ See the provided library examples for more information about their use.
 |void startReceiver()|Starts library in receiver mode, allowing for messages to be received|
 |String getPeerAddressString()|Prints the target peer address when in receiver mode|
 |void registerButtonCallback(<br />&nbsp;&nbsp;&nbsp;&nbsp;int button, <br />&nbsp;&nbsp;&nbsp;     void (*cb)(int))|Registeres a callback function of form ```void func(int)``` that will be called when a transition is read on either the controller or receiver. ```int button``` is the identifier for the desired input on the controller, see the **Input Identifiers** section of this readme for more information.|
+|void registerJoystickCallback(<br />&nbsp;&nbsp;&nbsp;     void (*cb)(float,float,float,float))|Registeres a callback function of form ```void func(float,float,float,float)``` that will be called when any of the joystick axis change by the threshold amount|
+|setJoystickCallbackThreshold(float threshold)| sets the amount of movement required on the joystick in order to trigger a callback. **Default value is 0.03**|
 |float getSuccessfulTransmissionPercentage()|Returns a value from 0-100 representing the ratio of successful transmissions to failed transmissions|
 |boolean isConnected()|Returns True if the **controller** is connected to the receiver.|
 |int readSW1()|Returns 0 or 1 (HIGH or LOW) depending on the state of SW1|
