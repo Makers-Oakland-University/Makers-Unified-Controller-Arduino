@@ -28,7 +28,7 @@ See the provided library examples for more information about their use.
 |void readAndSend()|reads all buttons and joysticks then transmits the data to the receiver. **Only for use in controller mode**|
 |void startReceiver()|Starts library in receiver mode, allowing for messages to be received|
 |String getPeerAddressString()|Prints the target peer address when in receiver mode|
-|void registerCallback(<br />&nbsp;&nbsp;&nbsp;&nbsp;int button, <br />&nbsp;&nbsp;&nbsp;     void (*cb)(int))|Registeres a callback function of form ```void func(int)``` that will be called when a transition is read on either the controller or receiver. ```int button``` is the identifier for the desired input on the controller, see the **Input Identifiers** section of this readme for more information.|
+|void registerButtonCallback(<br />&nbsp;&nbsp;&nbsp;&nbsp;int button, <br />&nbsp;&nbsp;&nbsp;     void (*cb)(int))|Registeres a callback function of form ```void func(int)``` that will be called when a transition is read on either the controller or receiver. ```int button``` is the identifier for the desired input on the controller, see the **Input Identifiers** section of this readme for more information.|
 |float getSuccessfulTransmissionPercentage()|Returns a value from 0-100 representing the ratio of successful transmissions to failed transmissions|
 |boolean isConnected()|Returns True if the **controller** is connected to the receiver.|
 |int readSW1()|Returns 0 or 1 (HIGH or LOW) depending on the state of SW1|
@@ -69,7 +69,7 @@ The switches are labeled as shown in the diagram below, the joysticks also conta
 
 ![diagram of switches for the makers unified controller](https://github.com/Makers-Oakland-University/readme-images/blob/main/makers_controller%20switch%20diagram.png?raw=true)
 
-For the **registerCallback()**  the first parameter is the button label, for each of the buttons the labels are as follows: 
+For the **registerButtonCallback()**  the first parameter is the button label, for each of the buttons the labels are as follows: 
 | Switch | Label |
 | ----- | ---- |
 |Switch 1|MAKERS_CONTROLLER_SW1|

@@ -119,7 +119,7 @@ public:
     float readLeftJoystickY();
     float readRightJoystickX();
     float readRightJoystickY();
-    void registerCallback(int button, void (*cb)(int));
+    void registerButtonCallback(int button, void (*cb)(int));
     void registerJoystickCallback(void (*cb)(float, float, float, float));
     float getSuccessfulTransmissionPercentage();
     void setJoystickCallbackThreshold(float threshold); 

@@ -375,7 +375,7 @@ float MakersController::readRightJoystickY()
     return controller_data.right_joy_y;
 }
 
-void MakersController::registerCallback(int button, void (*cb)(int))
+void MakersController::registerButtonCallback(int button, void (*cb)(int))
 {
     if (button < MAKERS_CONTROLLER_NUM_BUTTONS)
     {
