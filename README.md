@@ -7,10 +7,10 @@ The library simplifes the interfacing of the makers controller to a remote devic
 - [Makers-Unified-Controller-Arduino](#makers-unified-controller-arduino)
   - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
+  - [Utilizing the OLED Display](#utilizing-the-oled-display)
 - [Functions](#functions)
   - [Obtaining Receiver MAC Address](#obtaining-receiver-mac-address)
 - [Input Identifiers](#input-identifiers)
-- [Utilizing the OLED Display](#utilizing-the-oled-display)
 
 # Installation 
 Click the **Code > Download ZIP** and install to the Arduino IDE by navigating to **Sketch > Include Library > Add .ZIP Library...** and select the downloaded zip file. 
