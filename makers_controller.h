@@ -79,9 +79,8 @@ class MakersController
     uint8_t broadcastAddress[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
     void (*_callbacks[MAKERS_CONTROLLER_NUM_BUTTONS])(int);
     void (*_joystickCallback)(float, float, float, float);
-    float _joystick_update_threshold = 0.0;
+    float _joystick_update_threshold = 0.03;
     static MakersController *_reference;
-
     unsigned long data_sent_tracker = 0;
     int data_sent_tracker_index = 0;
 
@@ -92,6 +91,7 @@ class MakersController
     void initIO();
     inline int readSwitch(int position);
     inline void triggerJoystickCallback(float lx, float ly, float rx, float ry);
+    void checkJoystickTransition(float plx, float  ply, float prx, float pry, float nlx, float nly, float nrx, float nry);
     void serviceCallback(int index, int button_state);
     void checkButtonTransitions(uint16_t previous_state, uint16_t current_state);
     void printMakersASCII();
@@ -122,6 +122,7 @@ public:
     void registerCallback(int button, void (*cb)(int));
     void registerJoystickCallback(void (*cb)(float, float, float, float));
     float getSuccessfulTransmissionPercentage();
+    void setJoystickCallbackThreshold(float threshold); 
     boolean isConnected();
 };
 

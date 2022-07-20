@@ -115,8 +115,23 @@ void MakersController::startReceiver()
 void MakersController::onDataReceived(const uint8_t *mac, const uint8_t *incomingData, int len)
 {
     int previous_button_state = _reference->controller_data.buttons;
+
+    float plx = _reference->controller_data.left_joy_x;
+    float ply = _reference->controller_data.left_joy_y;
+    float prx = _reference->controller_data.right_joy_x;
+    float pry = _reference->controller_data.right_joy_y;
+
     memcpy(&_reference->controller_data, incomingData, sizeof(makers_controller_message));
     _reference->checkButtonTransitions(previous_button_state, _reference->controller_data.buttons);
+    _reference->checkJoystickTransition(
+        plx,
+        ply,
+        prx,
+        pry,
+        _reference->controller_data.left_joy_x,
+        _reference->controller_data.left_joy_y,
+        _reference->controller_data.right_joy_x,
+        _reference->controller_data.right_joy_y);
 }
 
 void MakersController::initIO()
@@ -172,6 +187,12 @@ float MakersController::getSuccessfulTransmissionPercentage()
 
 void MakersController::readAndSend()
 {
+
+    float plx = controller_data.left_joy_x;
+    float ply = controller_data.left_joy_y;
+    float prx = controller_data.right_joy_x;
+    float pry = controller_data.right_joy_y;
+
     controller_data.left_joy_y = (analogRead(PIN_LEFT_JOY_Y) / 2048.0) - 1.0;
     controller_data.left_joy_x = (analogRead(PIN_LEFT_JOY_X) / 2048.0) - 1.0;
 
@@ -197,10 +218,33 @@ void MakersController::readAndSend()
     // Send message via ESP-NOW
     esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *)&controller_data, sizeof(controller_data));
     checkButtonTransitions(previous_button_state, controller_data.buttons);
-
+    _reference->checkJoystickTransition(
+        plx,
+        ply,
+        prx,
+        pry,
+        _reference->controller_data.left_joy_x,
+        _reference->controller_data.left_joy_y,
+        _reference->controller_data.right_joy_x,
+        _reference->controller_data.right_joy_y);
 }
 
+void MakersController::checkJoystickTransition(float plx, float ply, float prx, float pry, float nlx, float nly, float nrx, float nry)
+{
+    boolean joysticksChanged = false;
+    boolean lx_changed = abs(plx - nlx) >= _joystick_update_threshold;
+    boolean ly_changed = abs(ply - nly) >= _joystick_update_threshold;
+    boolean rx_changed = abs(prx - nrx) >= _joystick_update_threshold;
+    boolean ry_changed = abs(pry - nry) >= _joystick_update_threshold;
 
+    if (lx_changed || ly_changed || rx_changed || ry_changed)
+        triggerJoystickCallback(nlx, nly, nrx, nry);
+}
+
+void MakersController::setJoystickCallbackThreshold(float threshold)
+{
+    _joystick_update_threshold = threshold;
+}
 
 void MakersController::checkButtonTransitions(uint16_t previous_state, uint16_t current_state)
 {
@@ -232,8 +276,9 @@ void MakersController::serviceCallback(int index, int button_state)
     _callbacks[index](button_state);
 }
 
-void MakersController::triggerJoystickCallback(float lx, float ly, float rx, float ry){
-    if(_joystickCallback != nullptr)
+void MakersController::triggerJoystickCallback(float lx, float ly, float rx, float ry)
+{
+    if (_joystickCallback != nullptr)
         _joystickCallback(lx, ly, rx, ry);
 }
 
