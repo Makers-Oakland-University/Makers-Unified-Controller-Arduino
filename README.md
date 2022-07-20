@@ -87,5 +87,5 @@ For the **registerButtonCallback()**  the first parameter is the button label, f
 
 # Utilizing the OLED Display
 
-This library does not support the LCD directly, for using the LCD you will need to install the [SSD 1306 Adafruit Library](https://github.com/adafruit/Adafruit_SSD1306). 
+This library does not support the LCD directly, for using the LCD you will need to install the [SSD1306 Adafruit Library](https://github.com/adafruit/Adafruit_SSD1306) and [Adafruit GFX Library](https://github.com/adafruit/Adafruit-GFX-Library)
 The Makers Unified Controller OLED is attached to **IO21 for SDA** and **IO22 for SCL**. 
