@@ -1,6 +1,10 @@
 #ifndef MAKERS_CONTROLLER_ARDUINO_H
 #define MAKERS_CONTROLLER_ARDUINO_H
 
+#ifndef ARDUINO_ARCH_ESP32
+#error “This library only supports boards based on the ESP32”
+#endif
+
 // Imports
 #include <Arduino.h>
 #include "Arduino.h"
