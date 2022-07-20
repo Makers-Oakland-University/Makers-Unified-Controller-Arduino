@@ -16,6 +16,12 @@ The library simplifes the interfacing of the makers controller to a remote devic
 Click the **Code > Download ZIP** and install to the Arduino IDE by navigating to **Sketch > Include Library > Add .ZIP Library...** and select the downloaded zip file. 
 This library requires the ESP32 Arduino Core to be installed, a guide for installation can be found [Here](https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/).
 
+## Utilizing the OLED Display
+
+This library does not support the LCD directly, for using the LCD you will need to install the [SSD1306 Adafruit Library](https://github.com/adafruit/Adafruit_SSD1306) and [Adafruit GFX Library](https://github.com/adafruit/Adafruit-GFX-Library)
+The Makers Unified Controller OLED is attached to **IO21 for SDA** and **IO22 for SCL**. 
+A simple example of using the OLD is supplied in the **basic_transmitter_oled.ino** example. 
+
 # Functions
 
 This section shows the available functions of the library with a description.
@@ -85,7 +91,4 @@ For the **registerButtonCallback()**  the first parameter is the button label, f
 |Left Trigger|MAKERS_CONTROLLER_SW_L_TRIG|
 |Right Trigger|MAKERS_CONTROLLER_SW_R_TRIG|
 
-# Utilizing the OLED Display
 
-This library does not support the LCD directly, for using the LCD you will need to install the [SSD1306 Adafruit Library](https://github.com/adafruit/Adafruit_SSD1306) and [Adafruit GFX Library](https://github.com/adafruit/Adafruit-GFX-Library)
-The Makers Unified Controller OLED is attached to **IO21 for SDA** and **IO22 for SCL**. 
