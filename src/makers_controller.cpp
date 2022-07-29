@@ -128,6 +128,17 @@ void MakersController::onDataReceived(const uint8_t *mac, const uint8_t *incomin
         _reference->controller_data.left_joy_y,
         _reference->controller_data.right_joy_x,
         _reference->controller_data.right_joy_y);
+    _reference->setLastMessageReceived(millis());
+}
+
+void MakersController::setLastMessageReceived(unsigned long time)
+{
+    _last_message_received = millis();
+}
+
+unsigned long MakersController::getLastMessageAge()
+{
+    return millis() - _last_message_received;
 }
 
 void MakersController::initIO()
@@ -195,25 +206,25 @@ void MakersController::readAndSend()
     float prx = controller_data.right_joy_x;
     float pry = controller_data.right_joy_y;
 
-    //read and map left x joystick
+    // read and map left x joystick
     if (analogRead(PIN_LEFT_JOY_X) < joystick_offsets[0])
         controller_data.left_joy_x = map(analogRead(PIN_LEFT_JOY_X), joystick_offsets[0], 0, 0, -2048) / 2048.0;
     else
         controller_data.left_joy_x = map(analogRead(PIN_LEFT_JOY_X), joystick_offsets[0], 4096, 0, 2048) / 2048.0;
 
-    //read and map left y joystick 
+    // read and map left y joystick
     if (analogRead(PIN_LEFT_JOY_Y) < joystick_offsets[1])
         controller_data.left_joy_y = map(analogRead(PIN_LEFT_JOY_Y), joystick_offsets[1], 0, 0, -2048) / 2048.0;
     else
         controller_data.left_joy_y = map(analogRead(PIN_LEFT_JOY_Y), joystick_offsets[1], 4096, 0, 2048) / 2048.0;
 
-    //read and map 
+    // read and map
     if (analogRead(PIN_RIGHT_JOY_X) < joystick_offsets[2])
         controller_data.right_joy_x = map(analogRead(PIN_RIGHT_JOY_X), joystick_offsets[2], 0, 0, -2048) / 2048.0;
     else
         controller_data.right_joy_x = map(analogRead(PIN_RIGHT_JOY_X), joystick_offsets[2], 4096, 0, 2048) / 2048.0;
 
-    //read and map left y joystick 
+    // read and map left y joystick
     if (analogRead(PIN_RIGHT_JOY_Y) < joystick_offsets[3])
         controller_data.right_joy_y = map(analogRead(PIN_RIGHT_JOY_Y), joystick_offsets[3], 0, 0, -2048) / 2048.0;
     else

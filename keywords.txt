@@ -25,6 +25,7 @@ readRightJoystickSwitch	KEYWORD2
 readLeftJoystickSwitch	KEYWORD2
 readRightTrigger	KEYWORD2
 readLeftTrigger	KEYWORD2
+getLastMessageAge	KEYWORD2
 readLeftJoystickX	KEYWORD2
 readLeftJoystickY	KEYWORD2
 readRightJoystickX	KEYWORD2

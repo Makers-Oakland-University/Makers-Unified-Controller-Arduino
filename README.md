@@ -39,6 +39,7 @@ See the provided library examples for more information about their use.
 |setJoystickCallbackThreshold(float threshold)| sets the amount of movement required on the joystick in order to trigger a callback. **Default value is 0.03**|
 |float getSuccessfulTransmissionPercentage()|Returns a value from 0-100 representing the ratio of successful transmissions to failed transmissions|
 |boolean isConnected()|Returns True if the **controller** is connected to the receiver.|
+|unsigned long getLastMessageAge() | Returns the amount of time in milliseconds since the last message was received from the peer device |
 |int readSW1()|Returns 0 or 1 (HIGH or LOW) depending on the state of SW1|
 |int readSW2()|Returns 0 or 1 (HIGH or LOW) depending on the state of SW2|
 |int readSW3()|Returns 0 or 1 (HIGH or LOW) depending on the state of SW3|

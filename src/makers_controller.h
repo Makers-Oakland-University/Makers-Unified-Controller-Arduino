@@ -86,6 +86,7 @@ class MakersController
     //in-order left-x, left-y, right-x, right-y
     float _last_joystick_values_triggered[4] = {0,0,0,0}; 
     int16_t joystick_offsets[4] = {0,0,0,0};
+    unsigned long _last_message_received = 0; 
 
     void (*_joystickCallback)(float, float, float, float);
     float _joystick_update_threshold = 0.03;
@@ -105,6 +106,7 @@ class MakersController
     void checkButtonTransitions(uint16_t previous_state, uint16_t current_state);
     void printMakersASCII();
     void trackDataSentStatus(int status);
+    void setLastMessageReceived(unsigned long time);
 
 public:
     MakersController();
@@ -128,6 +130,7 @@ public:
     float readLeftJoystickY();
     float readRightJoystickX();
     float readRightJoystickY();
+    unsigned long getLastMessageAge();
     void registerButtonCallback(int button, void (*cb)(int));
     void registerJoystickCallback(void (*cb)(float, float, float, float));
     float getSuccessfulTransmissionPercentage();
