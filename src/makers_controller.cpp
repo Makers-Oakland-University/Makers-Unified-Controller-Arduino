@@ -140,6 +140,12 @@ void MakersController::initIO()
     pinMode(PIN_RIGHT_JOY_X, INPUT);
     pinMode(PIN_RIGHT_JOY_SW, INPUT);
 
+    // get joystick offsets.
+    joystick_offsets[0] = analogRead(PIN_LEFT_JOY_X);
+    joystick_offsets[1] = analogRead(PIN_LEFT_JOY_Y);
+    joystick_offsets[2] = analogRead(PIN_RIGHT_JOY_X);
+    joystick_offsets[3] = analogRead(PIN_RIGHT_JOY_Y);
+
     pinMode(PIN_SW1, INPUT);
     pinMode(PIN_SW2, INPUT);
     pinMode(PIN_SW3, INPUT);
@@ -189,11 +195,29 @@ void MakersController::readAndSend()
     float prx = controller_data.right_joy_x;
     float pry = controller_data.right_joy_y;
 
-    controller_data.left_joy_y = (analogRead(PIN_LEFT_JOY_Y) / 2048.0) - 1.0;
-    controller_data.left_joy_x = (analogRead(PIN_LEFT_JOY_X) / 2048.0) - 1.0;
+    //read and map left x joystick
+    if (analogRead(PIN_LEFT_JOY_X) < joystick_offsets[0])
+        controller_data.left_joy_x = map(analogRead(PIN_LEFT_JOY_X), joystick_offsets[0], 0, 0, -2048) / 2048.0;
+    else
+        controller_data.left_joy_x = map(analogRead(PIN_LEFT_JOY_X), joystick_offsets[0], 4096, 0, 2048) / 2048.0;
 
-    controller_data.right_joy_y = (analogRead(PIN_RIGHT_JOY_Y) / 2048.0) - 1.0;
-    controller_data.right_joy_x = (analogRead(PIN_RIGHT_JOY_X) / 2048.0) - 1.0;
+    //read and map left y joystick 
+    if (analogRead(PIN_LEFT_JOY_Y) < joystick_offsets[1])
+        controller_data.left_joy_y = map(analogRead(PIN_LEFT_JOY_Y), joystick_offsets[1], 0, 0, -2048) / 2048.0;
+    else
+        controller_data.left_joy_y = map(analogRead(PIN_LEFT_JOY_Y), joystick_offsets[1], 4096, 0, 2048) / 2048.0;
+
+    //read and map 
+    if (analogRead(PIN_RIGHT_JOY_X) < joystick_offsets[2])
+        controller_data.right_joy_x = map(analogRead(PIN_RIGHT_JOY_X), joystick_offsets[2], 0, 0, -2048) / 2048.0;
+    else
+        controller_data.right_joy_x = map(analogRead(PIN_RIGHT_JOY_X), joystick_offsets[2], 4096, 0, 2048) / 2048.0;
+
+    //read and map left y joystick 
+    if (analogRead(PIN_RIGHT_JOY_Y) < joystick_offsets[3])
+        controller_data.right_joy_y = map(analogRead(PIN_RIGHT_JOY_Y), joystick_offsets[3], 0, 0, -2048) / 2048.0;
+    else
+        controller_data.right_joy_y = map(analogRead(PIN_RIGHT_JOY_Y), joystick_offsets[3], 4096, 0, 2048) / 2048.0;
 
     int previous_button_state = controller_data.buttons;
 
@@ -270,17 +294,16 @@ void MakersController::serviceCallback(int index, int button_state)
 
 void MakersController::triggerJoystickCallback(float lx, float ly, float rx, float ry)
 {
-    //if no joystick callback then return from the function
+    // if no joystick callback then return from the function
     if (_joystickCallback == nullptr)
         return;
 
     _joystickCallback(lx, ly, rx, ry);
 
-
-    _last_joystick_values_triggered[0] = lx; 
-    _last_joystick_values_triggered[1] = ly; 
-    _last_joystick_values_triggered[2] = rx; 
-    _last_joystick_values_triggered[3] = ry; 
+    _last_joystick_values_triggered[0] = lx;
+    _last_joystick_values_triggered[1] = ly;
+    _last_joystick_values_triggered[2] = rx;
+    _last_joystick_values_triggered[3] = ry;
 }
 
 void MakersController::registerJoystickCallback(void (*cb)(float, float, float, float))

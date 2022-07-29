@@ -82,7 +82,10 @@ class MakersController
     esp_now_peer_info_t peerInfo;
     uint8_t broadcastAddress[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
     void (*_callbacks[MAKERS_CONTROLLER_NUM_BUTTONS])(int);
-    float _last_joystick_values_triggered[4] = {0,0,0,0}; //in-order left-x, left-y, right-x, right-y
+    
+    //in-order left-x, left-y, right-x, right-y
+    float _last_joystick_values_triggered[4] = {0,0,0,0}; 
+    int16_t joystick_offsets[4] = {0,0,0,0};
 
     void (*_joystickCallback)(float, float, float, float);
     float _joystick_update_threshold = 0.03;
